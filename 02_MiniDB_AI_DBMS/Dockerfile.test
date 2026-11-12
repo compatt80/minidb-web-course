@@ -1,0 +1,19 @@
+FROM python:3.12-slim
+
+RUN sed -i 's|http://deb.debian.org|https://deb.debian.org|g' /etc/apt/sources.list.d/debian.sources \
+    && apt-get -o Acquire::Retries=3 update \
+    && apt-get -o Acquire::Retries=3 install -y --no-install-recommends g++ cmake make \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/minidb
+COPY CMakeLists.txt ./
+COPY include include
+COPY src src
+COPY tests tests
+RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release \
+    && cmake --build build -j2 \
+    && chown -R 65534:65534 build
+
+# Run without root so the unreadable database/WAL tests actually deny access.
+USER 65534:65534
+CMD ["ctest", "--test-dir", "build", "--output-on-failure", "-V"]

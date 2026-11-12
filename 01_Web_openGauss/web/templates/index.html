@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MiniDB | openGauss Console</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">M</span><span>MiniDB</span><small>openGauss Console</small></div>
+    <div class="connection-state"><span id="health-dot" class="dot pending"></span><span id="health-text">Connecting</span></div>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar panel">
+      <div class="panel-heading"><h2>Schema</h2><button id="refresh-tables" class="icon-button" title="Refresh tables" aria-label="Refresh tables">↻</button></div>
+      <div id="table-list" class="table-list"><div class="empty">Loading tables...</div></div>
+      <div class="sidebar-footer"><span class="status-led"></span><span id="database-label">postgres</span></div>
+    </aside>
+
+    <section class="main-column">
+      <div class="hero-line"><div><p class="eyebrow">DATABASE WORKSPACE</p><h1>SQL Console</h1></div><span class="engine-tag">openGauss 7</span></div>
+      <section class="editor-panel panel">
+        <div class="panel-heading"><div><h2>Query editor</h2><span class="muted">One statement per run</span></div><div class="editor-actions"><button id="clear-query" class="button secondary">Clear</button><button id="run-query" class="button primary"><span>▶</span> Run query</button></div></div>
+        <textarea id="sql-editor" spellcheck="false">SELECT id, name, class_name, score
+FROM students
+ORDER BY score DESC;</textarea>
+        <div class="quick-actions"><button data-sql="SELECT * FROM students ORDER BY id;">All students</button><button data-sql="SELECT class_name, COUNT(*) AS student_count FROM students GROUP BY class_name ORDER BY class_name;">Class summary</button><button data-sql="EXPLAIN SELECT * FROM students WHERE id = 2;">Explain plan</button></div>
+      </section>
+
+      <section class="result-panel panel">
+        <div class="panel-heading"><div><h2>Result</h2><span id="result-meta" class="muted">No query executed</span></div><span id="result-badge" class="result-badge neutral">READY</span></div>
+        <div id="result-area" class="result-area"><div class="result-placeholder"><span class="placeholder-icon">⌁</span><p>Run a query to inspect the result set.</p></div></div>
+      </section>
+    </section>
+
+    <aside id="details-panel" class="details panel">
+      <div class="panel-heading"><div><p class="eyebrow">OBJECT</p><h2 id="details-title">Select a table</h2></div></div>
+      <div id="details-area" class="details-area"><div class="result-placeholder compact"><span class="placeholder-icon">□</span><p>Choose a table from the schema.</p></div></div>
+    </aside>
+  </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

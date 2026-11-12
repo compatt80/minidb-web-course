@@ -1,0 +1,40 @@
+services:
+  opengauss:
+    build:
+      context: .
+      dockerfile: Dockerfile.opengauss
+    image: minidb-opengauss:7.0.0-RC3.B025-openblas
+    privileged: true
+    environment:
+      GS_PASSWORD: ${DB_PASSWORD:-openGauss@123}
+      GAUSSHOME: /usr/local/opengauss
+      PATH: /usr/local/opengauss/bin:/scws/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      LD_LIBRARY_PATH: /usr/local/opengauss/lib:/scws/lib
+    ports:
+      - "${DB_PUBLISHED_PORT:-5432}:5432"
+    volumes:
+      - opengauss-data:/var/lib/opengauss/data
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/local/opengauss/bin/gsql -h 127.0.0.1 -p 5432 -U gaussdb -d postgres -W \"$$GS_PASSWORD\" -c 'SELECT 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+      start_period: 20s
+
+  web:
+    build: .
+    environment:
+      DB_HOST: opengauss
+      DB_PORT: 5432
+      DB_NAME: postgres
+      DB_USER: gaussdb
+      DB_PASSWORD: ${DB_PASSWORD:-openGauss@123}
+      APP_PORT: 8080
+    depends_on:
+      opengauss:
+        condition: service_healthy
+    ports:
+      - "${WEB_PUBLISHED_PORT:-8080}:8080"
+
+volumes:
+  opengauss-data:

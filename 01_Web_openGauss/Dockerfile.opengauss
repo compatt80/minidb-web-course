@@ -1,0 +1,7 @@
+FROM opengauss/opengauss:7.0.0-RC3.B025
+
+# The upstream amd64 image requires OpenBLAS but does not ship its library.
+RUN yum install -y openblas \
+    && yum clean all \
+    && LD_LIBRARY_PATH=/usr/local/opengauss/lib:/scws/lib \
+       gosu omm /usr/local/opengauss/bin/gaussdb -V

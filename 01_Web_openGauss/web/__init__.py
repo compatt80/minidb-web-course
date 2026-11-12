@@ -1,0 +1,1 @@
+"""MiniDB Web console package."""

@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+bin/
+build/
+evidence/
+__pycache__/
+.venv/
+*.exe
+*.db
+*.db.lock
+*.wal
+*.log

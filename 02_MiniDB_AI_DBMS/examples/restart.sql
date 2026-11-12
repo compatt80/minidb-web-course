@@ -1,0 +1,3 @@
+SHOW TABLES;
+SELECT * FROM students ORDER BY id;
+EXPLAIN SELECT * FROM students WHERE id = 2;
